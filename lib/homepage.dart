@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'timerButton.dart';
@@ -112,6 +114,10 @@ class _HomePageState extends State<HomePage> {
                   functionName: 'Lap',
                   Click: () {
                     timer.onExecute.add(StopWatchExecute.lap);
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => LapInfo(timer: timer),
+                    );
                   },
                 ),
               ],
@@ -119,6 +125,30 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class LapInfo extends StatelessWidget {
+  final StopWatchTimer timer;
+  LapInfo({required this.timer});
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<StopWatchRecord>>(
+      stream: timer.records,
+      initialData: timer.records.value,
+      builder: (context, snapshot) {
+        final lapTime = snapshot.data;
+        return ListView.builder(
+          itemBuilder: ((context, index) {
+            final data = lapTime![index];
+            return Column(
+              children: [Text('${index + 1}. ${data.displayTime}')],
+            );
+          }),
+          itemCount: lapTime!.length,
+        );
+      },
     );
   }
 }
