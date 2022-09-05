@@ -2,7 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
-import 'timerButton.dart';
+import 'Components/timerButton.dart';
+import 'Components/lapInfo.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -44,32 +45,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Divider(
-              height: 55,
-            ),
-            StreamBuilder<int>(
-              stream: timer.rawTime,
-              initialData: timer.rawTime.value,
-              builder: ((context, snapshot) {
-                final time = snapshot.data;
-                final showTime =
-                    StopWatchTimer.getDisplayTime(time!, hours: isHours);
-                return Card(
-                  color: Color(0xFFF9F2ED),
-                  margin:
-                      EdgeInsets.only(left: 45, right: 45, top: 45, bottom: 20),
-                  child: Text(
-                    showTime,
-                    style: TextStyle(
-                        fontSize: 60,
-                        color: Color(0xFFF87474),
-                        fontWeight: FontWeight.w900),
-                    textAlign: TextAlign.center,
-                  ),
-                );
-              }),
-            ),
-            Divider(
-              height: 15,
+              height: 100,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -93,8 +69,27 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            Divider(
-              height: 20,
+            StreamBuilder<int>(
+              stream: timer.rawTime,
+              initialData: timer.rawTime.value,
+              builder: ((context, snapshot) {
+                final time = snapshot.data;
+                final showTime =
+                    StopWatchTimer.getDisplayTime(time!, hours: isHours);
+                return Card(
+                  color: Color(0xFFF9F2ED),
+                  margin:
+                      EdgeInsets.only(left: 45, right: 45, top: 20, bottom: 20),
+                  child: Text(
+                    showTime,
+                    style: TextStyle(
+                        fontSize: 50,
+                        color: Color(0xFFF87474),
+                        fontWeight: FontWeight.w900),
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -114,41 +109,29 @@ class _HomePageState extends State<HomePage> {
                   functionName: 'Lap',
                   Click: () {
                     timer.onExecute.add(StopWatchExecute.lap);
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => LapInfo(timer: timer),
-                    );
                   },
                 ),
               ],
             ),
+            Divider(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 60, right: 60),
+              child: TimerFunctions(
+                  timer: timer,
+                  functionName: 'Lap Timings',
+                  Click: () {
+                    showModalBottomSheet(
+                      backgroundColor: Color(0xFFF87474),
+                      context: context,
+                      builder: (context) => LapInfo(timer: timer),
+                    );
+                  }),
+            )
           ],
         ),
       ),
-    );
-  }
-}
-
-class LapInfo extends StatelessWidget {
-  final StopWatchTimer timer;
-  LapInfo({required this.timer});
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<StopWatchRecord>>(
-      stream: timer.records,
-      initialData: timer.records.value,
-      builder: (context, snapshot) {
-        final lapTime = snapshot.data;
-        return ListView.builder(
-          itemBuilder: ((context, index) {
-            final data = lapTime![index];
-            return Column(
-              children: [Text('${index + 1}. ${data.displayTime}')],
-            );
-          }),
-          itemCount: lapTime!.length,
-        );
-      },
     );
   }
 }

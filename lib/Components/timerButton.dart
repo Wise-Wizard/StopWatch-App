@@ -15,7 +15,7 @@ class TimerFunctions extends StatelessWidget {
       child: Text(
         functionName,
         style: TextStyle(
-            fontSize: 45, color: Colors.black, fontWeight: FontWeight.w900),
+            fontSize: 40, color: Colors.black, fontWeight: FontWeight.w900),
         textAlign: TextAlign.center,
       ),
       color: Color(0xFFFFB562),
